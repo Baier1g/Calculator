@@ -5,9 +5,6 @@ from shunting_yard import calout
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8','9']
 operators = ['+', '-', '/', '*', '(', ')']
 
-def add_numbers(num1, num2):
-    return num1 * 10 + num2
-
 def CBtn(button_text):
     return sg.Button(button_text, button_color=('white', 'blue'), size=(4, 1), font=("Helvetica", 20))
 
