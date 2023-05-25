@@ -1,0 +1,13 @@
+( 5 / 9 ) * 9 ^ 2 = 81 Doesn't work. Why?
+Found error in calculator, exponent fucking repeated 1 time too many because I forgor 0 indexing...
+Exponent function was wrong once again, multiplied by the wrong number...
+( 5 / 9 ) * 9 ^ 2 = 81 is WRONG btw, it's 45...
+BUT
+It works for ( 5 / 9 ) * 9 ^ 2 = 45 now lessgo
+( 5 ^ 2 / 9 ) * 3 = 8,333333333333332 It is right, but it prints way to many digits
+Fixed the digits now at it's down to 2 decimal place, with the option change that. Which is great to implement in the GUI. It's coming together!!
+How does the round() function round to 7.73...
+Found it, it rounded up the individual calculations while traversing the parse tree, so the errors stacked up
+Fixed it by rounding the value in testing(), so now it only rounds what it outputs to the calculator
+I guess that could make some of the calculations seem off from the GUI though. I'm guessing it's not that big an issue, but I'll have to conduct further testing to see if it works or not
+(( 5 ^ 3 / 9 ^ 2 ) ^ 2 ) / 10 = 0,24 worked perfectly, it's getting up there to the point where I think it's time to get the GUI going
