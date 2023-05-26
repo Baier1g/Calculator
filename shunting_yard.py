@@ -11,6 +11,12 @@ operator_info = {
     "^": opinfo(2, "R"),
 }
 
+def is_dot(tok):
+    for i in tok:
+        if i == '.':
+            return True
+
+
 def calculator(num1, num2, operator):
     operations = {
         '+': lambda x, y: x + y,
@@ -39,7 +45,7 @@ def tokenize(input_string):
     while len(chars) != 0:
         char = chars.pop(0)
 
-        if char.isdigit():
+        if char.isdigit() or char == ".":
             if state != "num":
                 output.append(buf) if buf != "" else False
                 buf = ""
@@ -73,7 +79,7 @@ def shunt(tokens):
     while len(tokens) != 1:
         current_token = tokens.pop(0)
 
-        if current_token.isdigit():
+        if current_token.isdigit() or is_dot(current_token):
             # Is a number
             #print("number", current_token)
             output.append(current_token)
@@ -151,7 +157,7 @@ def build_parse_tree(postfix_expression):
     stack = []
     
     for token in postfix_expression.split():
-        if token.isdigit():
+        if token.isdigit() or is_dot(token):
             node = Node(token)
             stack.append(node)
         else:
@@ -185,7 +191,7 @@ def evaluate_parse_tree(node):
     right_operand = evaluate_parse_tree(node.right)
     
     if left_operand is None or right_operand is None:
-        return int(node.value)
+        return float(node.value)
     else:
         return calculator(left_operand, right_operand, node.value)
 
@@ -201,19 +207,19 @@ def testing():
     ("1+2*3", 7),
     ("1+2 * 3 + 4", 11),
     ("1 + 2 * 3 + 4 * 5", 27),
-    ("5 * ( 4 + 3 ) / 35", 1),
+    ("5.9 * ( 4 + 3 ) / 35", 1.18),
     ("( 5 / 9 ) * 9 ^ 2", 45),
     ("( 5 ^ 2 / 9 ) * 3", 8.33),
     ("((5^3/9^2)^2)/10", 0.24)
     ]
     for enum, (test, expected_value) in enumerate(tests):
         tokens = tokenize(test)
+        print(tokens)
         postfix = " ".join(shunt(tokens))
         parse_tree = build_parse_tree(postfix)
         omnom = print_parse_tree(parse_tree)
         value = evaluate_parse_tree(parse_tree)
         value = round(value,2)
-        print(value)
         if (value != expected_value):
             print(f"Test {enum} failed")
             print(postfix)

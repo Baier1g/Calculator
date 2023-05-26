@@ -8,26 +8,25 @@ operators = ['+', '-', '/', '*', '(', ')']
 def CBtn(button_text):
     return sg.Button(button_text, button_color=('white', 'blue'), size=(4, 1), font=("Helvetica", 16))
 
-def show_his(num,my_list):
-    return f'{my_list[num][0]} = {my_list[num][1]}'
+def show_his(num,my_list1):
+    return f'{my_list1[num][0]} = {my_list1[num][1]}'
 
 def open_window(my_list):
-    headings = ['EQUATION', 'RESULT']
     pop_layout =  [
-        [sg.Text('  ')] + [sg.Text(h, size=(14,1)) for h in headings],
-        [[sg.Text(size=(15,1), pad=(0,0)) for col in range(2)] for row in range(len(my_list))],
-        [sg.Button('Exit')]
-        ]
+        [sg.Text('Equation and result history', size=(22,1), font=("Helvetica", 20), justification = 'center')],
+        [[sg.Text(show_his(row, my_list), size=(22,1), pad=(0,0), key = '-OUT-', font=("Helvetica", 20), justification = 'center')] for row in range(len(my_list))],
+        [sg.Button('Exit'), sg.Button('Clear')]
+    ]
 
-
-    pophistory = sg.Window('History',pop_layout)
+    pophistory = sg.Window('History', pop_layout)
     while True:
         event, values = pophistory.read()
-        for i in range(len(my_list)):
-            pophistory[i].update(show_his(i,my_list))
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-    pophistory.close()
+        # Gotta fix this later, it only clears the first element
+        if event == 'Clear':
+                pophistory['-OUT-'].update('')
+    pophistory.close(); del pophistory
 
 def run_gui():
     sg.theme('Dark Blue 3')   # Add a touch of color
@@ -50,16 +49,14 @@ def run_gui():
             break
         
         if event in numbers or event in operators:
-            if values[0] == None:
-                window[0].update(event)
-            else:    
-                window[0].update(f'{values[0]}{event}')
+            window[0].update(f'{values[0]}{event}')
 
         if event == 'BKSP':
+            if values[0] == '':
+                continue
             my_string = values[0]
             # Might be worth changing the slicing thing
             new_string = my_string[:-1]
-            print(new_string)
             window[0].update(new_string)
         
         if event == 'HIS' and len(history) != 0:
@@ -75,7 +72,7 @@ def run_gui():
             res = calout(values[0],int(values[1]))
             history.append([values[0],res])
             window[0].update(res)
-    window.close()
+    window.close(); del window
 
 
 if __name__ == "__main__":

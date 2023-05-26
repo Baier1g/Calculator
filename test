@@ -5,7 +5,7 @@ Exponent function was wrong once again, multiplied by the wrong number...
 BUT
 It works for ( 5 / 9 ) * 9 ^ 2 = 45 now lessgo
 ( 5 ^ 2 / 9 ) * 3 = 8,333333333333332 It is right, but it prints way to many digits
-Fixed the digits now at it's down to 2 decimal place, with the option change that. Which is great to implement in the GUI. It's coming together!!
+Fixed the digits, now it's down to 2 decimal place, with the option to change that. Which is great to implement in the GUI. It's coming together!!
 How does the round() function round to 7.73...
 Found it, it rounded up the individual calculations while traversing the parse tree, so the errors stacked up
 Fixed it by rounding the value in testing(), so now it only rounds what it outputs to the calculator
