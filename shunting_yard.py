@@ -83,11 +83,9 @@ def shunt(tokens):
             # Is a number
             #print("number", current_token)
             output.append(current_token)
-
         elif current_token in operator_info.keys():
             # Is an operator
             #print("op", current_token)
-            
             while True:
                 if len(operators) == 0:
                     break
@@ -102,7 +100,6 @@ def shunt(tokens):
                     if operator_info[operators[-1]].precedence > operator_info[current_token].precedence:
                         # operator at top has greater precedence
                         satisfied = True
-
                     elif operator_info[operators[-1]].precedence == operator_info[current_token].precedence:
                         if operator_info[operators[-1]].associativity == "left":
                             # equal precedence and has left associativity
@@ -116,16 +113,13 @@ def shunt(tokens):
                 output.append(operators.pop())
 
             operators.append(current_token)
-
         elif current_token == "(":
             # Is left bracket
             #print("left", current_token)
             operators.append(current_token)
-
         elif current_token == ")":
             # Is right bracket
             #print("right", current_token)
-
             while True:
                 if len(operators) == 0:
                     break
@@ -134,17 +128,14 @@ def shunt(tokens):
                     break
 
                 output.append(operators.pop())
-
             if len(operators) != 0 and operators[-1] == "(":
                 operators.pop()
-
         else:
             # Is a function name
             #print("func", current_token)
             operators.append(current_token)
-
     output.extend(operators[::-1])
-
+    
     return output
 
 class Node:
@@ -161,12 +152,16 @@ def build_parse_tree(postfix_expression):
             node = Node(token)
             stack.append(node)
         else:
-            right_node = stack.pop()
-            left_node = stack.pop()
-            node = Node(token)
-            node.left = left_node
-            node.right = right_node
-            stack.append(node)
+            if len(stack) <= 1:
+                break
+            else:    
+                right_node = stack.pop()
+                left_node = stack.pop()
+                node = Node(token)
+                node.left = left_node
+                node.right = right_node
+                stack.append(node)
+
     
     return stack[0]
 

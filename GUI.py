@@ -3,10 +3,10 @@ import re
 from shunting_yard import calout
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8','9']
-operators = ['+', '-', '/', '*', '(', ')']
+operators = ['+', '-', '/', '*', '^', '(', ')']
 
 def CBtn(button_text):
-    return sg.Button(button_text, button_color=('white', 'blue'), size=(4, 1), font=("Helvetica", 16))
+    return sg.Button(button_text, button_color=('white', 'blue'), size=(5, 1), font=("Helvetica", 16))
 
 def show_his(num,my_list1):
     return f'{my_list1[num][0]} = {my_list1[num][1]}'
@@ -17,7 +17,6 @@ def open_window(my_list):
         [[sg.Text(show_his(row, my_list), size=(22,1), pad=(0,0), key = '-OUT-', font=("Helvetica", 20), justification = 'center')] for row in range(len(my_list))],
         [sg.Button('Exit'), sg.Button('Clear')]
     ]
-
     pophistory = sg.Window('History', pop_layout)
     while True:
         event, values = pophistory.read()
@@ -25,7 +24,10 @@ def open_window(my_list):
             break
         # Gotta fix this later, it only clears the first element
         if event == 'Clear':
-                pophistory['-OUT-'].update('')
+                my_list.clear()
+                event = None
+                pophistory.close()
+                open_window(my_list)
     pophistory.close(); del pophistory
 
 def run_gui():
@@ -33,8 +35,9 @@ def run_gui():
     # All the stuff inside your window.
     history = []
     layout = [  [sg.Text('Input numbers'), sg.Input()],
-                [CBtn(t) for t in ('1', '2', '3', '+', 'BKSP')],
-                [CBtn(t) for t in ('4', '5', '6', '-', 'HIS')],
+                [CBtn(t) for t in ('MENU', 'HIS', 'BKSP', '^')],
+                [CBtn(t) for t in ('1', '2', '3', '+')],
+                [CBtn(t) for t in ('4', '5', '6', '-')],
                 [CBtn(t) for t in ('7', '8', '9', '*')],
                 [CBtn(t) for t in ('(','0',')', '/')],
                 [sg.Text('Set precision (decimalplaces)'), sg.Input()],
