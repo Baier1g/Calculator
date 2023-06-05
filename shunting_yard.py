@@ -1,3 +1,4 @@
+# THIS CODE IS OBSOLETE, GO TO tokenshunt.py FOR UP-TO-DATE CODE
 import re
 from collections import namedtuple
 
@@ -209,8 +210,8 @@ def testing():
     ]
     for enum, (test, expected_value) in enumerate(tests):
         tokens = tokenize(test)
-        print(tokens)
         postfix = " ".join(shunt(tokens))
+        print(postfix)
         parse_tree = build_parse_tree(postfix)
         omnom = print_parse_tree(parse_tree)
         value = evaluate_parse_tree(parse_tree)

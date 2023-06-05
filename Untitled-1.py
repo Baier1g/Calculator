@@ -20,10 +20,10 @@
 ##############################################################################################
 # 1. Basic calculations
 # 2. Order of operations with parsing trees
-# 3. A simple GUI
+# 3. A simple GUI, now with 2 (!) tabs!
+# 4. Implemented sin, cos and tan functions
 
 import PySimpleGUI as sg
-import math
 from tokenshunt import calout
 
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8","9"]
@@ -41,9 +41,9 @@ def main():
     history = []
     # Creates the layout of the main calculator window
     main_layout = [
+        [sg.Text("Input numbers", key = "-OUTPUT-"), sg.Input()],
         [sg.TabGroup([
             [sg.Tab("Simple", layout = [
-                [sg.Text("Input numbers"), sg.Input()],
                 [CBtn(t) for t in ("MENU", "HIS", "BKSP", "^")],
                 [CBtn(t) for t in ("1", "2", "3", "+")],
                 [CBtn(t) for t in ("4", "5", "6", "-")],
@@ -52,7 +52,6 @@ def main():
                 [sg.Button("Enter"), sg.Button("Cancel")]
             ])],
             [sg.Tab("Scientific", layout = [
-                [sg.Text("Input numbers"), sg.Input()],
                 [CBtn(t) for t in ("MENU", "HIS", "BKSP", "FUNC")],
                 [CBtn(t) for t in ("SIN", "COS", "TAN", "DIFF")]
                 ])
@@ -84,8 +83,7 @@ def main():
     
     deci = 0
     # This function creates the menu window
-    def open_menu(self):
-        self.decimal = 0
+    def open_menu():
         menu_layout = [  # Creates the layout for the menu window
         [sg.Text("Light/dark mode")],
         [sg.Text("Number of decimalplaces"), sg.Input(), sg.Button("Enter")],
@@ -98,12 +96,11 @@ def main():
         menu_win = sg.Window("Menu", menu_layout)
         while True:
             event, values = menu_win.read()
-            if event == "Exit" or sg.WIN_CLOSED:
+            if event == "Exit" or event == sg.WIN_CLOSED:
                 break
             
             if event == "Enter" and values[0].isdigit():
-                self.decimal = values[0]
-                menu_win[1].update(self.decimal)
+                menu_win[0].update(values[0])
         menu_win.close()
 
     # Opens the main window
@@ -126,9 +123,13 @@ def main():
 
         if event == "HIS":
             open_history()
+
+        if event == "Scientific":
+            event, values = main.read()
+            main["-OUTPUT-"].update(values[0])
         
         if event == "MENU":
-            MENU = open_menu(MENU)
+            open_menu()
         
         if event == "Enter":
             if deci <= 0:
