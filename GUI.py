@@ -1,6 +1,16 @@
 import PySimpleGUI as sg
 import re
 from shunting_yard import calout
+####################################################################################
+#                                    todo                                          #
+####################################################################################
+# 1. Must be able to run Doom
+# 1. SOLVING FUNCTIONS
+# 2. Differentiation and integration of functions
+# 3. Graphing these functions and make them easily interactable
+# 4. A compiler?? interpreter?? something to write code in
+# 5. 3D BABYYYYYY
+
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8','9']
 operators = ['+', '-', '/', '*', '^', '(', ')']
@@ -11,7 +21,25 @@ def CBtn(button_text):
 def show_his(num,my_list1):
     return f'{my_list1[num][0]} = {my_list1[num][1]}'
 
-def open_window(my_list):
+# Creating the window for the menu button
+def open_menu():
+    men_layout =  [
+        [sg.Text('Light/dark mode')],
+        [sg.Text('Number of decimalplaces')],
+        #['Menu', ['&Pause Graph', 'Menu item::-men-']]
+        [sg.Text('PLACEHOLDER')],
+        [sg.Text('PLACEHOLDER')],
+        [sg.Text('PLACEHOLDER')],
+        [sg.Text('PLACEHOLDER')],
+    ]
+    menu = sg.Window('Menu', men_layout)
+    while True:
+        event, values = menu.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            break
+
+# Creating the window for the history button
+def open_his(my_list):
     pop_layout =  [
         [sg.Text('Equation and result history', size=(22,1), font=("Helvetica", 20), justification = 'center')],
         [[sg.Text(show_his(row, my_list), size=(22,1), pad=(0,0), key = '-OUT-', font=("Helvetica", 20), justification = 'center')] for row in range(len(my_list))],
@@ -25,9 +53,8 @@ def open_window(my_list):
         # Gotta fix this later, it only clears the first element
         if event == 'Clear':
                 my_list.clear()
-                event = None
                 pophistory.close()
-                open_window(my_list)
+                open_his(my_list)
     pophistory.close(); del pophistory
 
 def run_gui():
@@ -63,9 +90,10 @@ def run_gui():
             window[0].update(new_string)
         
         if event == 'HIS' and len(history) != 0:
-            open_window(history)
-        else:
-            pass
+            open_his(history)
+        
+        if event == 'MENU':
+            open_menu()
 
         if values[1] == "":
             values[1] = 2
