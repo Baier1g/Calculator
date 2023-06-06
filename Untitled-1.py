@@ -24,7 +24,9 @@
 # 4. Implemented sin, cos and tan functions
 
 import PySimpleGUI as sg
+import math
 from tokenshunt import calout
+
 
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8","9"]
 operators = ["+", "-", "/", "*", "^", "(", ")"]
@@ -41,26 +43,6 @@ def main():
     sg.theme("Dark Blue 3") # COLORS
     history = []
     # Creates the layout of the main calculator window
-    main_layout = [
-        [sg.Text("Input numbers", key = "-OUTPUT-"), sg.Input()],
-        [sg.TabGroup([
-            [sg.Tab("Simple", layout = [
-                [CBtn(t) for t in ("MENU", "HIS", "BKSP", "^")],
-                [CBtn(t) for t in ("1", "2", "3", "+")],
-                [CBtn(t) for t in ("4", "5", "6", "-")],
-                [CBtn(t) for t in ("7", "8", "9", "*")],
-                [CBtn(t) for t in ("(","0",")", "/")],
-                [sg.Button("Enter"), sg.Button("Cancel")]
-            ], key = "-SIMPLE-")],
-            [sg.Tab("Scientific", layout = [
-                [CBtn(t) for t in ("MENU", "HIS", "BKSP", "FUNC")],
-                [CBtn(t) for t in ("SIN", "COS", "TAN", "DIFF")]
-                ], key = "-SCIENTIFIC-")
-            ]
-        ])]
-    ]
-
-    main = sg.Window("Calculator", main_layout)
 
     # This function creates the history window
     def open_history():
@@ -80,7 +62,7 @@ def main():
                 history.clear()
                 his_win.close()
                 open_history()
-        his_win.close(); del his_win
+        his_win.close()
     
     deci = 0
     # This function creates the menu window
@@ -104,48 +86,56 @@ def main():
                 menu_win[0].update(values[0])
         menu_win.close()
 
+    main_layout = [
+        [sg.Text("Input numbers", key = "-OUTPUT-"), sg.Input()],
+        [sg.TabGroup([
+            [sg.Tab("Simple", layout = [
+                [CBtn(t) for t in ("MENU", "HIS", "BKSP", "^")],
+                [CBtn(t) for t in ("1", "2", "3", "+")],
+                [CBtn(t) for t in ("4", "5", "6", "-")],
+                [CBtn(t) for t in ("7", "8", "9", "*")],
+                [CBtn(t) for t in ("(","0",")", "/")],
+                [sg.Button("Enter"), sg.Button("Cancel")]
+            ], key = "-SIMPLE-")],
+            [sg.Tab("Scientific", layout = [
+                [CBtn(t) for t in ("MENU", "HIS", "BKSP", "π")],
+                [CBtn(t) for t in ("sin", "cos", "tan", "DIFF")]
+                ], key = "-SCIENTIFIC-")
+            ]
+        ])]
+    ]
     # Opens the main window
+    main = sg.Window("Calculator", main_layout)
     # Use a while loop to keep the window running and read the events and values from main
     while True:
         event, values = main.read()
         if event == sg.WIN_CLOSED or event == "Cancel":
             break
         
-        if main["-SIMPLE-"].visible:
-            if event in numbers or event in operators or event in tri_func:
-                main[0].update(f"{values[0]}{event}")
-
-            if event == "MENU":
-                open_menu()
-            if event == "HIS":
-                open_history()
-            if event == "BKSP":
-                if values[0] == "":
-                    continue
-                my_string = values[0]
-                # Might be worth changing the slicing thing
-                new_string = my_string[:-1]
-                main[0].update(new_string)
+        if event in numbers or event in operators or event == "π":
+            main[0].update(f"{values[0]}{event}")
         
-            if event == "Enter":
-                if deci <= 0:
-                    deci = 2
-                res = calout(values[0], deci)
-                history.append([values[0],res])
-                main[0].update(res)
-        elif main["-SCIENTIFIC-"].visible:
-            if event == "MENU":
-                open_menu()
-            if event == "HIS":
-                open_history()
-            if event == "BKSP":
-                if values[0] == "":
-                    continue
-                my_string = values[0]
-                # Might be worth changing the slicing thing
-                new_string = my_string[:-1]
-                main[0].update(new_string)
-
+        if event in tri_func:
+            main[0].update(f"{values[0]}{event}(")
+        
+        if event == "MENU":
+            open_menu()
+        if event == "HIS":
+            open_history()
+        if event == "BKSP":
+            if values[0] == "":
+                continue
+            my_string = values[0]
+            # Might be worth changing the slicing thing
+            new_string = my_string[:-1]
+            main[0].update(new_string)
+        
+        if event == "Enter":
+            if deci <= 0:
+                deci = 2
+            res = calout(values[0], deci)
+            history.append([values[0],res])
+            main[0].update(res)
     main.close(); del main
 
 if __name__ == "__main__":

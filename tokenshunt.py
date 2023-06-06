@@ -2,6 +2,10 @@ import re
 import math
 from collections import namedtuple
 
+symbols = [
+
+]
+
 # Function that returns true if there is a dot in a string
 def is_dot(tok):
     for i in tok:
@@ -10,6 +14,9 @@ def is_dot(tok):
         
 # A function that calculates sin, cos or tan
 def trigon(function,input,deg_mode = 0):
+    if input == "π":
+        input = math.pi
+
     if deg_mode == 1: # Radians
         if function == "sin":
             return math.sin(input)
@@ -36,6 +43,10 @@ def calculator(num1, num2, operator):
         '/': lambda x, y: x / y,
         '^': lambda x, y: x ** y
     }
+    if num1 == "π":
+        num1 = math.pi
+    elif num2 == "π":
+        num2 = math.pi
     operation_func = operations.get(operator)
     if operation_func:
         result = operation_func(num1, num2)
@@ -73,7 +84,7 @@ def tokenize(in_str):
         char = chars.pop(0)
 
         # If the popped string is a number or a ".", it will check whether state is a number or not
-        if char.isdigit() or char == ".":
+        if char.isdigit() or char == "." or char == "π":
             if state != "num":
                 # Here it adds the complete string, either a number or an operator, to the list from buf if buf is not empty and resets buf
                 output.append(buf) if buf != "" else False
@@ -106,16 +117,14 @@ def tokenize(in_str):
         
 # This is the function that will shunt the tokenized string and return it as a list, that can be used when building the parsing tree
 def shunt(tokens):
-    tokens += ["end"]
     operators = []
     output = []
-    tri_funcs = []
 
-    while len(tokens) != 1:
+    while len(tokens) != 0:
         tok = tokens.pop(0)
 
         # If the popped token is a number or a dot, append it to the output list
-        if tok.isdigit() or is_dot(tok):
+        if tok.isdigit() or is_dot(tok) or tok == "π":
             output.append(tok)
 
         # If the popped token is an operator present in the keys of the operator_info tuple, make sure that the operator list is not empty 
@@ -174,7 +183,7 @@ def parse_tree(postfix_expression):
     
     # Iterates through the shunted list and creates a node for all the numbers
     for token in postfix_expression:
-        if token.isdigit() or is_dot(token):
+        if token.isdigit() or is_dot(token) or token == "π":
             node = Node(token)
             stack.append(node)
         # If the token is a trigonometric function, it pops once from the stack to right_node and creates a node and a right node for the trigonometric function
@@ -218,6 +227,8 @@ def evaluate_parse_tree(node):
     
     # Returns the value of the node if it's a leaf node and returns the calculated result of the 2 child nodes if the node is an operator
     if (left_node is None or right_node is None) and node.value not in functions:
+        if node.value == "π":
+            node.value = math.pi
         return float(node.value)
     elif node.value in functions:
         return trigon(node.value, right_node,1) 
@@ -226,10 +237,9 @@ def evaluate_parse_tree(node):
     
 def calout(usrin, deci = 2):
     tokens = tokenize(usrin)
-    postfix = (shunt(tokens))
+    postfix = shunt(tokens)
     print(postfix)
     tree = parse_tree(postfix)
-    omnom = print_parse_tree(tree)
     value = evaluate_parse_tree(tree)
     value = round(value,deci)
     print(value)
@@ -237,7 +247,7 @@ def calout(usrin, deci = 2):
 
 def testing():
     tests = [
-    ("5*sin(9/5)", 4.87),
+    ("sin(π/2)", 1),
     ("5*cos(9/5)", -1.14),
     ("5*tan(9/5)", -21.43),
     ("(6*cos(sin(9/5)/2))^3", 149.10),
@@ -251,6 +261,7 @@ def testing():
         tokens = tokenize(test)
         print(tokens)
         postfix = shunt(tokens)
+        print(postfix)
         tree = parse_tree(postfix)
         print_parse_tree(tree)
         value = evaluate_parse_tree(tree)
