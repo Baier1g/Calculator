@@ -28,6 +28,7 @@ from tokenshunt import calout
 
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8","9"]
 operators = ["+", "-", "/", "*", "^", "(", ")"]
+tri_func = ["sin", "cos", "tan"]
 
 # Function that is called when creating the button grid layout of the calculator
 def CBtn(button_text):
@@ -50,11 +51,11 @@ def main():
                 [CBtn(t) for t in ("7", "8", "9", "*")],
                 [CBtn(t) for t in ("(","0",")", "/")],
                 [sg.Button("Enter"), sg.Button("Cancel")]
-            ])],
+            ], key = "-SIMPLE-")],
             [sg.Tab("Scientific", layout = [
                 [CBtn(t) for t in ("MENU", "HIS", "BKSP", "FUNC")],
                 [CBtn(t) for t in ("SIN", "COS", "TAN", "DIFF")]
-                ])
+                ], key = "-SCIENTIFIC-")
             ]
         ])]
     ]
@@ -109,34 +110,42 @@ def main():
         event, values = main.read()
         if event == sg.WIN_CLOSED or event == "Cancel":
             break
-
-        if event in numbers or event in operators:
-            main[0].update(f"{values[0]}{event}")
-
-        if event == "BKSP":
-            if values[0] == "":
-                continue
-            my_string = values[0]
-            # Might be worth changing the slicing thing
-            new_string = my_string[:-1]
-            main[0].update(new_string)
-
-        if event == "HIS":
-            open_history()
-
-        if event == "Scientific":
-            event, values = main.read()
-            main["-OUTPUT-"].update(values[0])
         
-        if event == "MENU":
-            open_menu()
+        if main["-SIMPLE-"].visible:
+            if event in numbers or event in operators or event in tri_func:
+                main[0].update(f"{values[0]}{event}")
+
+            if event == "MENU":
+                open_menu()
+            if event == "HIS":
+                open_history()
+            if event == "BKSP":
+                if values[0] == "":
+                    continue
+                my_string = values[0]
+                # Might be worth changing the slicing thing
+                new_string = my_string[:-1]
+                main[0].update(new_string)
         
-        if event == "Enter":
-            if deci <= 0:
-                deci = 2
-            res = calout(values[0], deci)
-            history.append([values[0],res])
-            main[0].update(res)
+            if event == "Enter":
+                if deci <= 0:
+                    deci = 2
+                res = calout(values[0], deci)
+                history.append([values[0],res])
+                main[0].update(res)
+        elif main["-SCIENTIFIC-"].visible:
+            if event == "MENU":
+                open_menu()
+            if event == "HIS":
+                open_history()
+            if event == "BKSP":
+                if values[0] == "":
+                    continue
+                my_string = values[0]
+                # Might be worth changing the slicing thing
+                new_string = my_string[:-1]
+                main[0].update(new_string)
+
     main.close(); del main
 
 if __name__ == "__main__":

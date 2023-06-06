@@ -1,3 +1,4 @@
+# THIS GUI IS OLD AND WRONG, GO TO Untitled-1.py FOR UP-TO-DATE GUI
 import PySimpleGUI as sg
 import re
 from shunting_yard import calout
